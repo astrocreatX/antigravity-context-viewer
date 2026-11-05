@@ -1,0 +1,6 @@
+{
+  "name": "context-viewer",
+  "displayName": "Context & Environment",
+  "version": "1.0.0",
+  "description": "Live context token usage and git worktree status."
+}
