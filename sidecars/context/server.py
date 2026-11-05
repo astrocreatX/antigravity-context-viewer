@@ -140,6 +140,92 @@ def get_transcript_for_conv(conv_id):
     app_data = os.environ.get("ANTIGRAVITY_APP_DATA_DIR", os.path.expanduser("~/.gemini/antigravity"))
     return os.path.join(app_data, "brain", conv_id, ".system_generated", "logs", "transcript.jsonl")
 
+_usage_cache = {"time": 0, "data": []}
+
+def get_usage_quota():
+    now_ts = time.time()
+    if now_ts - _usage_cache["time"] < 8 and _usage_cache["data"]:
+        return _usage_cache["data"]
+
+    http_port = "60361"
+    try:
+        log_path = os.path.expanduser("~/Library/Logs/Antigravity/language_server.log")
+        if os.path.isfile(log_path):
+            with open(log_path, "r", encoding="utf-8") as f:
+                ports = re.findall(r"listening on random port at (\d+) for HTTP\b", f.read())
+                if ports:
+                    http_port = ports[-1]
+    except Exception:
+        pass
+
+    csrf = None
+    try:
+        out = subprocess.check_output(["ps", "-A", "-o", "command"], stderr=subprocess.DEVNULL, text=True)
+        for line in out.splitlines():
+            if "language_server" in line and "--csrf_token" in line:
+                m = re.search(r"--csrf_token\s+([a-f0-9\-]+)", line)
+                if m:
+                    csrf = m.group(1)
+                    break
+    except Exception:
+        pass
+
+    if not csrf:
+        return _usage_cache["data"]
+
+    url = f"http://127.0.0.1:{http_port}/exa.language_server_pb.LanguageServerService/RetrieveUserQuotaSummary"
+    req = urllib.request.Request(
+        url,
+        data=b"{}",
+        headers={"Content-Type": "application/json", "x-codeium-csrf-token": csrf},
+        method="POST"
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=1.5) as resp:
+            data = json.loads(resp.read().decode()).get("response", {})
+    except Exception:
+        return _usage_cache["data"]
+
+    groups = []
+    now_dt = datetime.now(timezone.utc)
+    for g in data.get("groups", []):
+        group_name = g.get("displayName", "")
+        buckets = []
+        for b in g.get("buckets", []):
+            w = b.get("window", "")
+            label = "Weekly limit" if w == "weekly" else ("5h limit" if w == "5h" else b.get("displayName", ""))
+            frac = float(b.get("remainingFraction", 1.0))
+            pct = int(round(frac * 100))
+            reset_label = ""
+            rt_str = b.get("resetTime")
+            if rt_str:
+                try:
+                    rt = datetime.fromisoformat(rt_str.replace("Z", "+00:00"))
+                    secs = int((rt - now_dt).total_seconds())
+                    if secs > 0:
+                        d = secs // 86400
+                        h = (secs % 86400) // 3600
+                        m = (secs % 3600) // 60
+                        if d > 0:
+                            reset_label = f"Resets in {d}d {h}h"
+                        elif h > 0:
+                            reset_label = f"Resets in {h}h {m}m"
+                        else:
+                            reset_label = f"Resets in {m}m"
+                except Exception:
+                    pass
+            buckets.append({
+                "label": label,
+                "pct": pct,
+                "fraction": frac,
+                "reset_label": reset_label
+            })
+        groups.append({"name": group_name, "buckets": buckets})
+
+    _usage_cache["time"] = now_ts
+    _usage_cache["data"] = groups
+    return groups
 
 def get_token_info(conv_id=None, is_new=False):
     convs = get_conversations_list()
@@ -339,6 +425,117 @@ def get_git_info(suggested_ws=None):
         "worktree_path": worktree_path.replace(os.path.expanduser("~"), "~")
     }
 
+def get_theme_palette():
+    paths = [
+        os.path.expanduser("~/Library/Application Support/Antigravity/app_storage.json"),
+        os.path.expanduser("~/.config/Antigravity/app_storage.json"),
+        os.path.join(os.environ.get("APPDATA", ""), "Antigravity", "app_storage.json")
+    ]
+    p_dark = "Default"
+    p_light = "Default"
+    for p in paths:
+        if os.path.isfile(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    d = json.load(f)
+                    p_dark = d.get("theme-preset-dark", "Default")
+                    p_light = d.get("theme-preset-light", "Default")
+                    break
+            except Exception:
+                pass
+
+    palettes_dark = {
+        "gruvbox": {
+            "bg": "#282828", "card_bg": "#32302f", "border": "rgba(235, 219, 178, 0.12)",
+            "active_border": "rgba(125, 174, 163, 0.6)", "text": "#ebdbb2", "muted": "#928374",
+            "blue": "#7daea3", "orange": "#e78a4e", "green": "#a9b665", "gray": "rgba(146, 131, 116, 0.35)",
+            "select_bg": "#3c3836", "pill_bg": "rgba(235, 219, 178, 0.08)", "pill_border": "rgba(235, 219, 178, 0.14)",
+            "tooltip_bg": "#1d2021"
+        },
+        "tokyo": {
+            "bg": "#1a1b26", "card_bg": "#24283b", "border": "rgba(192, 202, 245, 0.12)",
+            "active_border": "rgba(122, 162, 247, 0.6)", "text": "#c0caf5", "muted": "#565f89",
+            "blue": "#7aa2f7", "orange": "#ff9e64", "green": "#9ece6a", "gray": "rgba(86, 95, 137, 0.35)",
+            "select_bg": "#292e42", "pill_bg": "rgba(192, 202, 245, 0.08)", "pill_border": "rgba(192, 202, 245, 0.14)",
+            "tooltip_bg": "#16161e"
+        },
+        "nord": {
+            "bg": "#2e3440", "card_bg": "#3b4252", "border": "rgba(216, 222, 233, 0.12)",
+            "active_border": "rgba(136, 192, 208, 0.6)", "text": "#eceff4", "muted": "#4c566a",
+            "blue": "#88c0d0", "orange": "#d08770", "green": "#a3be8c", "gray": "rgba(76, 86, 106, 0.35)",
+            "select_bg": "#434c5e", "pill_bg": "rgba(216, 222, 233, 0.08)", "pill_border": "rgba(216, 222, 233, 0.14)",
+            "tooltip_bg": "#242933"
+        },
+        "solarized": {
+            "bg": "#002b36", "card_bg": "#073642", "border": "rgba(131, 148, 150, 0.15)",
+            "active_border": "rgba(38, 139, 210, 0.6)", "text": "#839496", "muted": "#586e75",
+            "blue": "#268bd2", "orange": "#cb4b16", "green": "#859900", "gray": "rgba(88, 110, 117, 0.35)",
+            "select_bg": "#073642", "pill_bg": "rgba(131, 148, 150, 0.08)", "pill_border": "rgba(131, 148, 150, 0.15)",
+            "tooltip_bg": "#00212b"
+        },
+        "monokai": {
+            "bg": "#272822", "card_bg": "#383830", "border": "rgba(248, 248, 242, 0.12)",
+            "active_border": "rgba(102, 217, 239, 0.6)", "text": "#f8f8f2", "muted": "#75715e",
+            "blue": "#66d9ef", "orange": "#fd971f", "green": "#a6e22e", "gray": "rgba(117, 113, 94, 0.35)",
+            "select_bg": "#3e3d32", "pill_bg": "rgba(248, 248, 242, 0.08)", "pill_border": "rgba(248, 248, 242, 0.14)",
+            "tooltip_bg": "#1e1f1c"
+        },
+        "catppuccin": {
+            "bg": "#1e1e2e", "card_bg": "#24273a", "border": "rgba(205, 214, 244, 0.12)",
+            "active_border": "rgba(137, 180, 250, 0.6)", "text": "#cdd6f4", "muted": "#6c7086",
+            "blue": "#89b4fa", "orange": "#fab387", "green": "#a6e3a1", "gray": "rgba(108, 112, 134, 0.35)",
+            "select_bg": "#313244", "pill_bg": "rgba(205, 214, 244, 0.08)", "pill_border": "rgba(205, 214, 244, 0.14)",
+            "tooltip_bg": "#181825"
+        },
+        "default": {
+            "bg": "#18191c", "card_bg": "#212226", "border": "rgba(255, 255, 255, 0.09)",
+            "active_border": "rgba(60, 130, 246, 0.5)", "text": "#f4f4f5", "muted": "#a1a1aa",
+            "blue": "#3b82f6", "orange": "#f97316", "green": "#10b981", "gray": "rgba(120, 120, 130, 0.35)",
+            "select_bg": "#25262b", "pill_bg": "rgba(255, 255, 255, 0.05)", "pill_border": "rgba(255, 255, 255, 0.1)",
+            "tooltip_bg": "#202023"
+        }
+    }
+
+    palettes_light = {
+        "gruvbox": {
+            "bg": "#fbf1c7", "card_bg": "#f4ebd5", "border": "rgba(60, 56, 54, 0.14)",
+            "active_border": "rgba(69, 112, 122, 0.6)", "text": "#282828", "muted": "#7c6f64",
+            "blue": "#45707a", "orange": "#c35e0a", "green": "#6c782e", "gray": "rgba(168, 153, 132, 0.35)",
+            "select_bg": "#ebdbb2", "pill_bg": "rgba(60, 56, 54, 0.06)", "pill_border": "rgba(60, 56, 54, 0.14)",
+            "tooltip_bg": "#282828"
+        },
+        "solarized": {
+            "bg": "#fdf6e3", "card_bg": "#eee8d5", "border": "rgba(101, 123, 131, 0.15)",
+            "active_border": "rgba(38, 139, 210, 0.6)", "text": "#657b83", "muted": "#93a1a1",
+            "blue": "#268bd2", "orange": "#cb4b16", "green": "#859900", "gray": "rgba(147, 161, 161, 0.35)",
+            "select_bg": "#e0d8c3", "pill_bg": "rgba(101, 123, 131, 0.06)", "pill_border": "rgba(101, 123, 131, 0.15)",
+            "tooltip_bg": "#073642"
+        },
+        "default": {
+            "bg": "#f4f4f6", "card_bg": "#ffffff", "border": "rgba(0, 0, 0, 0.09)",
+            "active_border": "rgba(37, 99, 235, 0.5)", "text": "#18181b", "muted": "#71717a",
+            "blue": "#2563eb", "orange": "#ea580c", "green": "#16a34a", "gray": "rgba(0, 0, 0, 0.12)",
+            "select_bg": "#e4e4e7", "pill_bg": "rgba(0, 0, 0, 0.04)", "pill_border": "rgba(0, 0, 0, 0.1)",
+            "tooltip_bg": "#18181b"
+        }
+    }
+
+    d_key = "default"
+    for k in palettes_dark:
+        if k in p_dark.lower():
+            d_key = k
+            break
+    dark_pal = palettes_dark[d_key]
+
+    l_key = "default"
+    for k in palettes_light:
+        if k in p_light.lower():
+            l_key = k
+            break
+    light_pal = palettes_light[l_key]
+
+    return dark_pal, light_pal
+
 HTML_PAGE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -346,59 +543,7 @@ HTML_PAGE = """<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Context & Environment</title>
   <style>
-    :root {
-      color-scheme: dark light;
-      --bg: #282828;
-      --card-bg: #32302f;
-      --card-border: rgba(235, 219, 178, 0.12);
-      --card-active-border: rgba(125, 174, 163, 0.6);
-      --text: #ebdbb2;
-      --text-muted: #928374;
-      --blue: #7daea3;
-      --orange: #e78a4e;
-      --green: #a9b665;
-      --gray: rgba(146, 131, 116, 0.35);
-      --select-bg: #3c3836;
-      --pill-bg: rgba(235, 219, 178, 0.08);
-      --pill-border: rgba(235, 219, 178, 0.14);
-      --tooltip-bg: #1d2021;
-    }
-
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #fbf1c7;
-        --card-bg: #f4ebd5;
-        --card-border: rgba(60, 56, 54, 0.14);
-        --card-active-border: rgba(69, 112, 122, 0.6);
-        --text: #282828;
-        --text-muted: #7c6f64;
-        --blue: #45707a;
-        --orange: #c35e0a;
-        --green: #6c782e;
-        --gray: rgba(168, 153, 132, 0.35);
-        --select-bg: #ebdbb2;
-        --pill-bg: rgba(60, 56, 54, 0.06);
-        --pill-border: rgba(60, 56, 54, 0.14);
-        --tooltip-bg: #282828;
-      }
-    }
-
-    body.vscode-light {
-      --bg: #fbf1c7;
-      --card-bg: #f4ebd5;
-      --card-border: rgba(60, 56, 54, 0.14);
-      --card-active-border: rgba(69, 112, 122, 0.6);
-      --text: #282828;
-      --text-muted: #7c6f64;
-      --blue: #45707a;
-      --orange: #c35e0a;
-      --green: #6c782e;
-      --gray: rgba(168, 153, 132, 0.35);
-      --select-bg: #ebdbb2;
-      --pill-bg: rgba(60, 56, 54, 0.06);
-      --pill-border: rgba(60, 56, 54, 0.14);
-      --tooltip-bg: #282828;
-    }
+/* __THEME_STYLES__ */
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body {
@@ -1194,12 +1339,69 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(data).encode("utf-8"))
         else:
+            dark_pal, light_pal = get_theme_palette()
+            css_vars = f"""
+    :root {{
+      color-scheme: dark light;
+      --bg: var(--vscode-sideBar-background, var(--vscode-editor-background, {dark_pal["bg"]}));
+      --card-bg: var(--vscode-editorWidget-background, {dark_pal["card_bg"]});
+      --card-border: var(--vscode-widget-border, {dark_pal["border"]});
+      --card-active-border: {dark_pal["active_border"]};
+      --text: var(--vscode-sideBar-foreground, var(--vscode-foreground, {dark_pal["text"]}));
+      --text-muted: var(--vscode-descriptionForeground, {dark_pal["muted"]});
+      --blue: {dark_pal["blue"]};
+      --orange: {dark_pal["orange"]};
+      --green: {dark_pal["green"]};
+      --gray: {dark_pal["gray"]};
+      --select-bg: {dark_pal["select_bg"]};
+      --pill-bg: {dark_pal["pill_bg"]};
+      --pill-border: {dark_pal["pill_border"]};
+      --tooltip-bg: {dark_pal["tooltip_bg"]};
+    }}
+
+    @media (prefers-color-scheme: light) {{
+      :root {{
+        --bg: var(--vscode-sideBar-background, var(--vscode-editor-background, {light_pal["bg"]}));
+        --card-bg: var(--vscode-editorWidget-background, {light_pal["card_bg"]});
+        --card-border: var(--vscode-widget-border, {light_pal["border"]});
+        --card-active-border: {light_pal["active_border"]};
+        --text: var(--vscode-sideBar-foreground, var(--vscode-foreground, {light_pal["text"]}));
+        --text-muted: var(--vscode-descriptionForeground, {light_pal["muted"]});
+        --blue: {light_pal["blue"]};
+        --orange: {light_pal["orange"]};
+        --green: {light_pal["green"]};
+        --gray: {light_pal["gray"]};
+        --select-bg: {light_pal["select_bg"]};
+        --pill-bg: {light_pal["pill_bg"]};
+        --pill-border: {light_pal["pill_border"]};
+        --tooltip-bg: {light_pal["tooltip_bg"]};
+      }}
+    }}
+
+    body.vscode-light {{
+      --bg: var(--vscode-sideBar-background, var(--vscode-editor-background, {light_pal["bg"]}));
+      --card-bg: var(--vscode-editorWidget-background, {light_pal["card_bg"]});
+      --card-border: var(--vscode-widget-border, {light_pal["border"]});
+      --card-active-border: {light_pal["active_border"]};
+      --text: var(--vscode-sideBar-foreground, var(--vscode-foreground, {light_pal["text"]}));
+      --text-muted: var(--vscode-descriptionForeground, {light_pal["muted"]});
+      --blue: {light_pal["blue"]};
+      --orange: {light_pal["orange"]};
+      --green: {light_pal["green"]};
+      --gray: {light_pal["gray"]};
+      --select-bg: {light_pal["select_bg"]};
+      --pill-bg: {light_pal["pill_bg"]};
+      --pill-border: {light_pal["pill_border"]};
+      --tooltip-bg: {light_pal["tooltip_bg"]};
+    }}
+"""
+            page_content = HTML_PAGE.replace("/* __THEME_STYLES__ */", css_vars)
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Cache-Control", "no-cache")
             self.send_header("X-Content-Type-Options", "nosniff")
             self.end_headers()
-            self.wfile.write(HTML_PAGE.encode("utf-8"))
+            self.wfile.write(page_content.encode("utf-8"))
 
     def log_message(self, format, *args):
         pass
