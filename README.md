@@ -2,7 +2,7 @@
 
 A lightweight, zero-token UI sidecar plugin for **Google Antigravity** that displays real-time context token usage, Git workspace / worktree status, and model quota limits right in the Auxiliary Pane.
 
-![UI Overview](https://raw.githubusercontent.com/astrocreatX/antigravity-context-viewer/main/assets/preview.png) *(or view directly inside Antigravity)*
+![UI Overview](assets/preview.png)
 
 ---
 
