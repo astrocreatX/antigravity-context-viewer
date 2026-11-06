@@ -1,4 +1,4 @@
-# Context & Environment Sidecar for Google Antigravity
+# Context & Environment Sidecar for Google Antigravity like in Claude Desktop
 
 A lightweight, zero-token UI sidecar plugin for **Google Antigravity** that displays real-time context token usage, Git workspace / worktree status, and model quota limits right in the Auxiliary Pane.
 
@@ -51,7 +51,7 @@ A lightweight, zero-token UI sidecar plugin for **Google Antigravity** that disp
 Run this one-liner in your terminal:
 
 ```bash
-git clone https://github.com/astrocreatX/antigravity-context-viewer.git ~/.gemini/config/plugins/context-viewer
+git clone https://github.com/cardinalX/antigravity-context-viewer.git ~/.gemini/config/plugins/context-viewer
 ```
 
 Then restart Google Antigravity or open a new conversation.
