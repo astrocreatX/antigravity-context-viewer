@@ -446,76 +446,76 @@ def get_theme_palette():
 
     palettes_dark = {
         "gruvbox": {
-            "bg": "#282828", "card_bg": "#32302f", "border": "rgba(235, 219, 178, 0.12)",
+            "card_bg": "rgba(255, 255, 255, 0.04)", "border": "rgba(255, 255, 255, 0.08)",
             "active_border": "rgba(125, 174, 163, 0.6)", "text": "#ebdbb2", "muted": "#928374",
-            "blue": "#7daea3", "orange": "#e78a4e", "green": "#a9b665", "gray": "rgba(146, 131, 116, 0.35)",
-            "select_bg": "#3c3836", "pill_bg": "rgba(235, 219, 178, 0.08)", "pill_border": "rgba(235, 219, 178, 0.14)",
+            "blue": "#7daea3", "orange": "#e78a4e", "green": "#a9b665", "gray": "rgba(255, 255, 255, 0.12)",
+            "select_bg": "rgba(255, 255, 255, 0.06)", "pill_bg": "rgba(255, 255, 255, 0.05)", "pill_border": "rgba(255, 255, 255, 0.08)",
             "tooltip_bg": "#1d2021"
         },
         "tokyo": {
-            "bg": "#1a1b26", "card_bg": "#24283b", "border": "rgba(192, 202, 245, 0.12)",
+            "card_bg": "rgba(255, 255, 255, 0.04)", "border": "rgba(192, 202, 245, 0.12)",
             "active_border": "rgba(122, 162, 247, 0.6)", "text": "#c0caf5", "muted": "#565f89",
-            "blue": "#7aa2f7", "orange": "#ff9e64", "green": "#9ece6a", "gray": "rgba(86, 95, 137, 0.35)",
-            "select_bg": "#292e42", "pill_bg": "rgba(192, 202, 245, 0.08)", "pill_border": "rgba(192, 202, 245, 0.14)",
+            "blue": "#7aa2f7", "orange": "#ff9e64", "green": "#9ece6a", "gray": "rgba(255, 255, 255, 0.12)",
+            "select_bg": "rgba(255, 255, 255, 0.06)", "pill_bg": "rgba(192, 202, 245, 0.08)", "pill_border": "rgba(192, 202, 245, 0.12)",
             "tooltip_bg": "#16161e"
         },
         "nord": {
-            "bg": "#2e3440", "card_bg": "#3b4252", "border": "rgba(216, 222, 233, 0.12)",
+            "card_bg": "rgba(255, 255, 255, 0.04)", "border": "rgba(216, 222, 233, 0.12)",
             "active_border": "rgba(136, 192, 208, 0.6)", "text": "#eceff4", "muted": "#4c566a",
-            "blue": "#88c0d0", "orange": "#d08770", "green": "#a3be8c", "gray": "rgba(76, 86, 106, 0.35)",
-            "select_bg": "#434c5e", "pill_bg": "rgba(216, 222, 233, 0.08)", "pill_border": "rgba(216, 222, 233, 0.14)",
+            "blue": "#88c0d0", "orange": "#d08770", "green": "#a3be8c", "gray": "rgba(255, 255, 255, 0.12)",
+            "select_bg": "rgba(255, 255, 255, 0.06)", "pill_bg": "rgba(216, 222, 233, 0.08)", "pill_border": "rgba(216, 222, 233, 0.12)",
             "tooltip_bg": "#242933"
         },
         "solarized": {
-            "bg": "#002b36", "card_bg": "#073642", "border": "rgba(131, 148, 150, 0.15)",
+            "card_bg": "rgba(255, 255, 255, 0.04)", "border": "rgba(131, 148, 150, 0.15)",
             "active_border": "rgba(38, 139, 210, 0.6)", "text": "#839496", "muted": "#586e75",
-            "blue": "#268bd2", "orange": "#cb4b16", "green": "#859900", "gray": "rgba(88, 110, 117, 0.35)",
-            "select_bg": "#073642", "pill_bg": "rgba(131, 148, 150, 0.08)", "pill_border": "rgba(131, 148, 150, 0.15)",
+            "blue": "#268bd2", "orange": "#cb4b16", "green": "#859900", "gray": "rgba(255, 255, 255, 0.12)",
+            "select_bg": "rgba(255, 255, 255, 0.06)", "pill_bg": "rgba(131, 148, 150, 0.08)", "pill_border": "rgba(131, 148, 150, 0.12)",
             "tooltip_bg": "#00212b"
         },
         "monokai": {
-            "bg": "#272822", "card_bg": "#383830", "border": "rgba(248, 248, 242, 0.12)",
+            "card_bg": "rgba(255, 255, 255, 0.04)", "border": "rgba(248, 248, 242, 0.12)",
             "active_border": "rgba(102, 217, 239, 0.6)", "text": "#f8f8f2", "muted": "#75715e",
-            "blue": "#66d9ef", "orange": "#fd971f", "green": "#a6e22e", "gray": "rgba(117, 113, 94, 0.35)",
-            "select_bg": "#3e3d32", "pill_bg": "rgba(248, 248, 242, 0.08)", "pill_border": "rgba(248, 248, 242, 0.14)",
+            "blue": "#66d9ef", "orange": "#fd971f", "green": "#a6e22e", "gray": "rgba(255, 255, 255, 0.12)",
+            "select_bg": "rgba(255, 255, 255, 0.06)", "pill_bg": "rgba(248, 248, 242, 0.08)", "pill_border": "rgba(248, 248, 242, 0.12)",
             "tooltip_bg": "#1e1f1c"
         },
         "catppuccin": {
-            "bg": "#1e1e2e", "card_bg": "#24273a", "border": "rgba(205, 214, 244, 0.12)",
+            "card_bg": "rgba(255, 255, 255, 0.04)", "border": "rgba(205, 214, 244, 0.12)",
             "active_border": "rgba(137, 180, 250, 0.6)", "text": "#cdd6f4", "muted": "#6c7086",
-            "blue": "#89b4fa", "orange": "#fab387", "green": "#a6e3a1", "gray": "rgba(108, 112, 134, 0.35)",
-            "select_bg": "#313244", "pill_bg": "rgba(205, 214, 244, 0.08)", "pill_border": "rgba(205, 214, 244, 0.14)",
+            "blue": "#89b4fa", "orange": "#fab387", "green": "#a6e3a1", "gray": "rgba(255, 255, 255, 0.12)",
+            "select_bg": "rgba(255, 255, 255, 0.06)", "pill_bg": "rgba(205, 214, 244, 0.08)", "pill_border": "rgba(205, 214, 244, 0.12)",
             "tooltip_bg": "#181825"
         },
         "default": {
-            "bg": "#18191c", "card_bg": "#212226", "border": "rgba(255, 255, 255, 0.09)",
+            "card_bg": "rgba(255, 255, 255, 0.04)", "border": "rgba(255, 255, 255, 0.08)",
             "active_border": "rgba(60, 130, 246, 0.5)", "text": "#f4f4f5", "muted": "#a1a1aa",
-            "blue": "#3b82f6", "orange": "#f97316", "green": "#10b981", "gray": "rgba(120, 120, 130, 0.35)",
-            "select_bg": "#25262b", "pill_bg": "rgba(255, 255, 255, 0.05)", "pill_border": "rgba(255, 255, 255, 0.1)",
+            "blue": "#3b82f6", "orange": "#f97316", "green": "#10b981", "gray": "rgba(255, 255, 255, 0.12)",
+            "select_bg": "rgba(255, 255, 255, 0.06)", "pill_bg": "rgba(255, 255, 255, 0.05)", "pill_border": "rgba(255, 255, 255, 0.08)",
             "tooltip_bg": "#202023"
         }
     }
 
     palettes_light = {
         "gruvbox": {
-            "bg": "#fbf1c7", "card_bg": "#f4ebd5", "border": "rgba(60, 56, 54, 0.14)",
-            "active_border": "rgba(69, 112, 122, 0.6)", "text": "#282828", "muted": "#7c6f64",
-            "blue": "#45707a", "orange": "#c35e0a", "green": "#6c782e", "gray": "rgba(168, 153, 132, 0.35)",
-            "select_bg": "#ebdbb2", "pill_bg": "rgba(60, 56, 54, 0.06)", "pill_border": "rgba(60, 56, 54, 0.14)",
+            "card_bg": "rgba(0, 0, 0, 0.03)", "border": "rgba(0, 0, 0, 0.08)",
+            "active_border": "rgba(0, 0, 0, 0.18)", "text": "#3c3836", "muted": "#7c6f64",
+            "blue": "#45707a", "orange": "#c35e0a", "green": "#6c782e", "gray": "rgba(0, 0, 0, 0.08)",
+            "select_bg": "rgba(0, 0, 0, 0.04)", "pill_bg": "rgba(0, 0, 0, 0.04)", "pill_border": "rgba(0, 0, 0, 0.08)",
             "tooltip_bg": "#282828"
         },
         "solarized": {
-            "bg": "#fdf6e3", "card_bg": "#eee8d5", "border": "rgba(101, 123, 131, 0.15)",
-            "active_border": "rgba(38, 139, 210, 0.6)", "text": "#657b83", "muted": "#93a1a1",
-            "blue": "#268bd2", "orange": "#cb4b16", "green": "#859900", "gray": "rgba(147, 161, 161, 0.35)",
-            "select_bg": "#e0d8c3", "pill_bg": "rgba(101, 123, 131, 0.06)", "pill_border": "rgba(101, 123, 131, 0.15)",
+            "card_bg": "rgba(0, 0, 0, 0.03)", "border": "rgba(0, 0, 0, 0.08)",
+            "active_border": "rgba(0, 0, 0, 0.18)", "text": "#657b83", "muted": "#93a1a1",
+            "blue": "#268bd2", "orange": "#cb4b16", "green": "#859900", "gray": "rgba(0, 0, 0, 0.08)",
+            "select_bg": "rgba(0, 0, 0, 0.04)", "pill_bg": "rgba(0, 0, 0, 0.04)", "pill_border": "rgba(0, 0, 0, 0.08)",
             "tooltip_bg": "#073642"
         },
         "default": {
-            "bg": "#f4f4f6", "card_bg": "#ffffff", "border": "rgba(0, 0, 0, 0.09)",
-            "active_border": "rgba(37, 99, 235, 0.5)", "text": "#18181b", "muted": "#71717a",
-            "blue": "#2563eb", "orange": "#ea580c", "green": "#16a34a", "gray": "rgba(0, 0, 0, 0.12)",
-            "select_bg": "#e4e4e7", "pill_bg": "rgba(0, 0, 0, 0.04)", "pill_border": "rgba(0, 0, 0, 0.1)",
+            "card_bg": "rgba(0, 0, 0, 0.03)", "border": "rgba(0, 0, 0, 0.08)",
+            "active_border": "rgba(0, 0, 0, 0.18)", "text": "#18181b", "muted": "#71717a",
+            "blue": "#2563eb", "orange": "#ea580c", "green": "#16a34a", "gray": "rgba(0, 0, 0, 0.08)",
+            "select_bg": "rgba(0, 0, 0, 0.04)", "pill_bg": "rgba(0, 0, 0, 0.04)", "pill_border": "rgba(0, 0, 0, 0.08)",
             "tooltip_bg": "#18181b"
         }
     }
@@ -1343,12 +1343,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             css_vars = f"""
     :root {{
       color-scheme: dark light;
-      --bg: var(--vscode-sideBar-background, var(--vscode-editor-background, {dark_pal["bg"]}));
-      --card-bg: var(--vscode-editorWidget-background, {dark_pal["card_bg"]});
-      --card-border: var(--vscode-widget-border, {dark_pal["border"]});
+      --bg: transparent;
+      --card-bg: {dark_pal["card_bg"]};
+      --card-border: {dark_pal["border"]};
       --card-active-border: {dark_pal["active_border"]};
-      --text: var(--vscode-sideBar-foreground, var(--vscode-foreground, {dark_pal["text"]}));
-      --text-muted: var(--vscode-descriptionForeground, {dark_pal["muted"]});
+      --text: {dark_pal["text"]};
+      --text-muted: {dark_pal["muted"]};
       --blue: {dark_pal["blue"]};
       --orange: {dark_pal["orange"]};
       --green: {dark_pal["green"]};
@@ -1361,12 +1361,12 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     @media (prefers-color-scheme: light) {{
       :root {{
-        --bg: var(--vscode-sideBar-background, var(--vscode-editor-background, {light_pal["bg"]}));
-        --card-bg: var(--vscode-editorWidget-background, {light_pal["card_bg"]});
-        --card-border: var(--vscode-widget-border, {light_pal["border"]});
+        --bg: transparent;
+        --card-bg: {light_pal["card_bg"]};
+        --card-border: {light_pal["border"]};
         --card-active-border: {light_pal["active_border"]};
-        --text: var(--vscode-sideBar-foreground, var(--vscode-foreground, {light_pal["text"]}));
-        --text-muted: var(--vscode-descriptionForeground, {light_pal["muted"]});
+        --text: {light_pal["text"]};
+        --text-muted: {light_pal["muted"]};
         --blue: {light_pal["blue"]};
         --orange: {light_pal["orange"]};
         --green: {light_pal["green"]};
@@ -1379,12 +1379,12 @@ class RequestHandler(BaseHTTPRequestHandler):
     }}
 
     body.vscode-light {{
-      --bg: var(--vscode-sideBar-background, var(--vscode-editor-background, {light_pal["bg"]}));
-      --card-bg: var(--vscode-editorWidget-background, {light_pal["card_bg"]});
-      --card-border: var(--vscode-widget-border, {light_pal["border"]});
+      --bg: transparent;
+      --card-bg: {light_pal["card_bg"]};
+      --card-border: {light_pal["border"]};
       --card-active-border: {light_pal["active_border"]};
-      --text: var(--vscode-sideBar-foreground, var(--vscode-foreground, {light_pal["text"]}));
-      --text-muted: var(--vscode-descriptionForeground, {light_pal["muted"]});
+      --text: {light_pal["text"]};
+      --text-muted: {light_pal["muted"]};
       --blue: {light_pal["blue"]};
       --orange: {light_pal["orange"]};
       --green: {light_pal["green"]};
